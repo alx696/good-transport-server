@@ -2,16 +2,17 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
-    # tags:
-    #   - 'v*'
+    # branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
 
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/cache@v3
+    - name: golang-cache
+      uses: actions/cache@v3
       with:
         path: |
           ~/.cache/go-build
@@ -24,7 +25,8 @@ jobs:
       with:
         go-version: 1.19
 
-    - uses: actions/cache@v3
+    - name: gradle-cache
+      uses: actions/cache@v3
       with:
         path: |
           ~/.gradle/caches
@@ -38,7 +40,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
 
-    - id: setup-ndk
+    - id: ndk
       uses: nttld/setup-ndk@v1
       with:
         ndk-version: r20b
@@ -48,13 +50,13 @@ jobs:
 
     - name: Build
       env:
-        ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
       run: |
         sh build.sh
         ls -l build/*
 
-    - name: Upload Linux
+    - name: Upload
       uses: svenstaro/upload-release-action@v2
       with:
-        file: build/gts-amd64
-        body: "Linux"
+        file: build/*
+        body: "里路好传服务, 目前支持Ubuntu, Windows, Android. 访问 https://lilu.red 探索更多有趣的技术."
