@@ -43,7 +43,14 @@ jobs:
         sh build.sh
         ls -l build/*
 
-    - uses: actions/upload-artifact@v3
+      #    # 上传构建产物
+      #    - uses: actions/upload-artifact@v3
+      #      with:
+      #        name: lilu
+      #        path: build/
+
+    - name: Upload
+      uses: svenstaro/upload-release-action@v2
       with:
-        name: lilu
-        path: build/
+        file: build/gts-*
+        body: "里路好传服务, 目前支持Ubuntu, Windows, Android. 访问 https://lilu.red 探索更多有趣的技术."
