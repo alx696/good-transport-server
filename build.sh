@@ -25,7 +25,7 @@ else
   echo "已经安装gomobile"
 fi
 go get -d golang.org/x/mobile/cmd/gomobile
-gomobile bind -target=android/arm64,android/arm,android/amd64 -o "build/android.aar" github.com/alx696/go-less/lilu_net ./http_server ./qc
-rm "build/android-sources.jar"
+gomobile bind -target=android/arm64,android/arm,android/amd64 -o "build/gts-android.aar" github.com/alx696/go-less/lilu_net ./http_server ./qc
+rm "build/gts-android-sources.jar"
 
 go mod tidy

@@ -11,34 +11,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: golang-cache
-      uses: actions/cache@v3
+    - uses: actions/setup-go@v3
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-        restore-keys: |
-          ${{ runner.os }}-go-
-
-    - uses: actions/setup-go@v2
-      with:
-        go-version: 1.19
-
-    - name: gradle-cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
+        go-version: '>=1.19.0'
+        cache: true
+      - run: go version
 
     - uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'adopt'
+        distribution: 'temurin'
+        cache: 'gradle'
 
     - id: ndk
       uses: nttld/setup-ndk@v1
@@ -55,8 +38,7 @@ jobs:
         sh build.sh
         ls -l build/*
 
-    - name: Upload
-      uses: svenstaro/upload-release-action@v2
+    - uses: actions/upload-artifact@v3
       with:
-        file: build/*
-        body: "里路好传服务, 目前支持Ubuntu, Windows, Android. 访问 https://lilu.red 探索更多有趣的技术."
+        name: lilu
+        path: build/
