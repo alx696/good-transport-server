@@ -43,6 +43,7 @@ jobs:
         sh build.sh
         cd http_server
         tar zcf template.tar.gz template
+        mv template.tar.gz ../build/
         cd ..
         ls -l build/*
 
