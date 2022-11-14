@@ -11,34 +11,34 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-go@v3
-      with:
-        go-version: '>=1.19.0'
-        cache: true
-      - run: go version
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '>=1.19.0'
+          cache: true
+        - run: go version
 
-    - uses: actions/setup-java@v2
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: 'gradle'
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'gradle'
 
-    - id: ndk
-      uses: nttld/setup-ndk@v1
-      with:
-        ndk-version: r20b
-        add-to-path: false
+      - id: ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r20b
+          add-to-path: false
 
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Build
-      env:
-        ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
-      run: |
-        sh build.sh
-        ls -l build/*
+      - name: Build
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: |
+          sh build.sh
+          ls -l build/*
 
-    - uses: actions/upload-artifact@v3
-      with:
-        name: lilu
-        path: build/
+      - uses: actions/upload-artifact@v3
+        with:
+          name: lilu
+          path: build/
