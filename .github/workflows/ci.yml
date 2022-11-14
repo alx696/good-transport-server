@@ -52,5 +52,7 @@ jobs:
     - name: Upload
       uses: svenstaro/upload-release-action@v2
       with:
+        file_glob: true
         file: build/gts-*
+        overwrite: true
         body: "里路好传服务, 目前支持Ubuntu, Windows, Android. 访问 https://lilu.red 探索更多有趣的技术."
