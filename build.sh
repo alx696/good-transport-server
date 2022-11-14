@@ -15,10 +15,10 @@ GOOS=windows go build -o "build/gts-amd64.exe"
 echo "Android ARM64"
 GOOS=android GOARCH=arm64 go build -o "build/gts-android_arm64"
 
-echo "Android"
+echo "Android AAR"
 echo "NDK路径: ${ANDROID_NDK_HOME}"
 if [ -z "$(which gomobile)" ]; then
-  echo "没有安装gomobile"
+  echo "没有安装gomobile, 安装gomobile"
   go install golang.org/x/mobile/cmd/gomobile@latest
   gomobile init
 else

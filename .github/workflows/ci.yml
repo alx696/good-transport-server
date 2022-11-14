@@ -23,6 +23,11 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
 
+    - name: Android NDK
+      uses: nttld/setup-ndk@v1
+      with:
+        ndk-version: r20b
+
     - name: Build
       run: |
         sh build.sh
