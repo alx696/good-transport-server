@@ -41,11 +41,7 @@ jobs:
         ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
       run: |
         sh build.sh
-        cd http_server
-        tar zcf template.tar.gz template
-        mv template.tar.gz ../build/
-        cd ..
-        ls -l build/*
+        ls build
 
       #    # 上传构建产物
       #    - uses: actions/upload-artifact@v3

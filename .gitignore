@@ -1,6 +1,6 @@
 *.iml
 /.idea/
+__debug_bin
 /build/
 /file/
-http_server.port
-__debug_bin
+port.txt

@@ -249,14 +249,17 @@ func uploadStartHandler(ctx *fasthttp.RequestCtx) {
 		ctx.SetBodyString("文件大小错误")
 		return
 	}
+	log.Println("开始上传文件", fileName, fileSize)
 
-	id := uuid.New().String()
-	log.Println("收到文件", id, fileName, fileSize)
+	// 生成文件ID
+	fileId := fmt.Sprint(uuid.New().String(), filepath.Ext(fileName))
 
-	clientCallback.UploadStart(id, fileName, fileSize)
+	// 回调
+	clientCallback.UploadStart(fileId, fileName, fileSize)
 
+	// 返回
 	ctx.SetStatusCode(fasthttp.StatusOK)
-	ctx.SetBodyString(id)
+	ctx.SetBodyString(fileId)
 }
 
 // 继续上传文件
