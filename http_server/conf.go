@@ -18,7 +18,7 @@ func getNew(confPath string) (int, error) {
 	}
 
 	// 保存端口
-	confFile, e := os.OpenFile(confPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	confFile, e := os.OpenFile(confPath, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, os.ModePerm)
 	if e != nil {
 		return 0, fmt.Errorf("创建HTTP配置文件出错: %s", e.Error())
 	}
