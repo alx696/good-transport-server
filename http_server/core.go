@@ -333,11 +333,11 @@ func uploadBlockHandler(ctx *fasthttp.RequestCtx) {
 // templateDirArg 模板文件夹, 需要把模板放到这个文件夹中
 //
 // fileDirArg 文件存放目录, 用来存放上传的文件
-func Start(rootDirArg string, callbackArg Callback) {
+func Start(rootDirArg string, httpPort int64, callbackArg Callback) {
 	log.Println("启动HTTP", rootDirArg)
 	rootDir = rootDirArg
 	clientCallback = callbackArg
-	clientCallback.Log(fmt.Sprintf("开始启动服务 根目录:%s", rootDirArg))
+	clientCallback.Log(fmt.Sprintf("开始启动服务 文件夹:%s HTTP端口:%d", rootDirArg, httpPort))
 
 	// 检查模板文件夹
 	templateDir = path.Join(rootDirArg, "template")
@@ -362,14 +362,6 @@ func Start(rootDirArg string, callbackArg Callback) {
 
 	// 获取IP
 	ip, e := lilu_net.GetIp()
-	if e != nil {
-		log.Println(e)
-		clientCallback.Error(e.Error())
-		return
-	}
-
-	// 获取端口
-	port, e := getPort(rootDir)
 	if e != nil {
 		log.Println(e)
 		clientCallback.Error(e.Error())
@@ -414,7 +406,7 @@ func Start(rootDirArg string, callbackArg Callback) {
 		Handler:            requestHandler,
 	}
 	go func() {
-		e := httpServer.ListenAndServe(fmt.Sprintf(`:%d`, port))
+		e := httpServer.ListenAndServe(fmt.Sprintf(`:%d`, httpPort))
 		if e != nil {
 			log.Println("服务启动错误", e.Error())
 			clientCallback.Error(e.Error())
@@ -422,11 +414,10 @@ func Start(rootDirArg string, callbackArg Callback) {
 		}
 	}()
 
-	httpAddress = fmt.Sprintf("%s:%d", ip, port)
+	httpAddress = fmt.Sprintf("%s:%d", ip, httpPort)
 	if strings.Contains(ip, ":") {
-		httpAddress = fmt.Sprintf("[%s]:%d", ip, port)
+		httpAddress = fmt.Sprintf("[%s]:%d", ip, httpPort)
 	}
-
 	clientCallback.Ready(httpAddress)
 	clientCallback.Log(fmt.Sprintf("已经启动服务 %s", httpAddress))
 }

@@ -76,12 +76,15 @@ func main() {
 
 	// 根文件夹
 	rootDirectory := flag.String("d", currentDir, "root directory")
+	httpPort := flag.Int64("p", 1000, "http port")
 	flag.Parse()
-	log.Println("根文件夹", *rootDirectory)
+	log.Println("文件夹", *rootDirectory)
+	log.Println("http端口", *httpPort)
 
 	// 启动HTTP服务
 	http_server.Start(
 		*rootDirectory,
+		*httpPort,
 		CallbackImpl{},
 	)
 
