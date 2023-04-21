@@ -35,9 +35,9 @@ func (impl CallbackImpl) Log(txt string) {
 	http_server.WebSocketPush("日志", txt)
 }
 
-func (impl CallbackImpl) Ready(addr string) {
-	log.Println("就绪", addr)
-	http_server.WebSocketPush("就绪", addr)
+func (impl CallbackImpl) Ready() {
+	log.Println("就绪")
+	http_server.WebSocketPush("就绪", "就绪")
 }
 
 func (impl CallbackImpl) Error(txt string) {

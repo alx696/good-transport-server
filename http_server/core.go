@@ -12,11 +12,9 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
-	"github.com/alx696/go-less/lilu_net"
 	"github.com/fasthttp/websocket"
 	"github.com/google/uuid"
 	"github.com/valyala/fasthttp"
@@ -27,7 +25,7 @@ type Callback interface {
 	// Log 日志
 	Log(txt string)
 	// Ready 就绪
-	Ready(addr string)
+	Ready()
 	// Error 错误
 	Error(txt string)
 	// UploadStart 文件上传开始
@@ -56,10 +54,9 @@ var wsUpgrader = websocket.FastHTTPUpgrader{
 	},
 }
 var wsConnMap = make(map[string]*websocket.Conn)
-var rootDir, templateDir, fileDir string
+var templateDir, fileDir string
 var clientCallback Callback
 var httpServer *fasthttp.Server
-var httpAddress string
 
 // 更新WebSocket连接
 //
@@ -82,15 +79,6 @@ func wsConnUpdate(id string, conn *websocket.Conn) {
 
 // 首页
 func rootHandler(ctx *fasthttp.RequestCtx) {
-	// 获取当前文件夹
-	currentDir, e := filepath.Abs(filepath.Dir(os.Args[0]))
-	if e != nil {
-		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-		_, _ = ctx.Write([]byte(fmt.Sprintf(`获取当前文件夹出错: %s`, e.Error())))
-		return
-	}
-	log.Println("当前文件夹", currentDir)
-
 	// 加载模板
 	t, e := template.ParseFiles(filepath.Join(templateDir, "index.html"))
 	if e != nil {
@@ -100,22 +88,6 @@ func rootHandler(ctx *fasthttp.RequestCtx) {
 	}
 	ctx.Response.Header.Set("Content-Type", "text/html; charset=utf-8")
 	_ = t.Execute(ctx.Response.BodyWriter(), &templateData{})
-}
-
-// 服务信息
-func serverInfoHandler(ctx *fasthttp.RequestCtx) {
-	method := string(ctx.Method())
-
-	if method != "GET" {
-		ctx.SetStatusCode(fasthttp.StatusBadRequest)
-		ctx.SetBodyString("只能GET")
-		return
-	}
-
-	data, _ := json.Marshal(ServerInfo{HttpAddress: httpAddress, RootDirectory: rootDir})
-
-	ctx.SetStatusCode(fasthttp.StatusOK)
-	ctx.SetBody(data)
 }
 
 // 生成二维码
@@ -331,7 +303,6 @@ func uploadBlockHandler(ctx *fasthttp.RequestCtx) {
 // Start 启动
 func Start(rootDirArg string, httpPort int64, callbackArg Callback) {
 	log.Println("启动HTTP", rootDirArg)
-	rootDir = rootDirArg
 	clientCallback = callbackArg
 	clientCallback.Log(fmt.Sprintf("开始启动服务 文件夹:%s HTTP端口:%d", rootDirArg, httpPort))
 
@@ -356,14 +327,6 @@ func Start(rootDirArg string, httpPort int64, callbackArg Callback) {
 		}
 	}
 
-	// 获取IP
-	ip, e := lilu_net.GetIp()
-	if e != nil {
-		log.Println(e)
-		clientCallback.Error(e.Error())
-		return
-	}
-
 	requestHandler := func(ctx *fasthttp.RequestCtx) {
 		//CORS
 		ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
@@ -379,8 +342,6 @@ func Start(rootDirArg string, httpPort int64, callbackArg Callback) {
 		switch string(ctx.Path()) {
 		case "/":
 			rootHandler(ctx)
-		case "/server/info":
-			serverInfoHandler(ctx)
 		case "/qrcode":
 			qrcodeHandler(ctx)
 		case "/feed":
@@ -410,12 +371,8 @@ func Start(rootDirArg string, httpPort int64, callbackArg Callback) {
 		}
 	}()
 
-	httpAddress = fmt.Sprintf("%s:%d", ip, httpPort)
-	if strings.Contains(ip, ":") {
-		httpAddress = fmt.Sprintf("[%s]:%d", ip, httpPort)
-	}
-	clientCallback.Ready(httpAddress)
-	clientCallback.Log(fmt.Sprintf("已经启动服务 %s", httpAddress))
+	clientCallback.Ready()
+	clientCallback.Log("服务已经启动")
 }
 
 // Stop 停止
