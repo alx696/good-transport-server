@@ -329,10 +329,6 @@ func uploadBlockHandler(ctx *fasthttp.RequestCtx) {
 }
 
 // Start 启动
-//
-// templateDirArg 模板文件夹, 需要把模板放到这个文件夹中
-//
-// fileDirArg 文件存放目录, 用来存放上传的文件
 func Start(rootDirArg string, httpPort int64, callbackArg Callback) {
 	log.Println("启动HTTP", rootDirArg)
 	rootDir = rootDirArg
