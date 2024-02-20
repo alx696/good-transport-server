@@ -294,9 +294,10 @@
                 document.body.append(inputElement);
 
                 inputElement.addEventListener('change', () => {
-                    const file = inputElement.files[0];
-                    console.debug('选择文件', file);
-                    sendFile(file);
+                    for (const file of inputElement.files) {
+                        console.debug('选择文件', file);
+                        sendFile(file);
+                    }
                 });
                 inputElement.click();
             });
