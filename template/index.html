@@ -290,7 +290,7 @@
                     return;
                 }
 
-                const inputElement = Tool.html(`<input type="file" style="display: none;">`);
+                const inputElement = Tool.html(`<input type="file" multiple style="display: none;">`);
                 document.body.append(inputElement);
 
                 inputElement.addEventListener('change', () => {
