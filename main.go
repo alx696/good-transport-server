@@ -76,7 +76,7 @@ func main() {
 
 	// 根文件夹
 	rootDirectory := flag.String("d", currentDir, "root directory")
-	httpPort := flag.Int64("p", 1000, "http port")
+	httpPort := flag.Int64("p", 10000, "http port")
 	flag.Parse()
 	log.Println("文件夹", *rootDirectory)
 	log.Println("http端口", *httpPort)

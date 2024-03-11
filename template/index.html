@@ -90,6 +90,18 @@
             height: 100%;
             background-color: green;
         }
+
+        #notice {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: red;
+            color: white;
+        }
+
+        #notice:empty {
+            margin-top: 0;
+            padding: 0;
+        }
     </style>
     <script>
         // https://filesizejs.com/
@@ -255,6 +267,16 @@
             const textElement = document.body.querySelector('#text');
             const sendTextElement = document.body.querySelector('#sendText');
 
+            const isWeChat = () => {
+                return /MicroMessenger/i.test(window.navigator.userAgent);
+            };
+
+            if (window.AlipayJSBridge) {
+                document.body.querySelector('#notice').textContent = '支付宝扫码时，同时只能选择一个文件，不能多选！建议用浏览器打开，推荐使用Chrome获得完整体验。';
+            } else if (isWeChat()) {
+                document.body.querySelector('#notice').textContent = '微信扫码时，同时不要选择多个文件，否则无法发送！建议用浏览器打开，推荐使用Chrome获得完整体验。';
+            }
+
             const sendFile = (file) => {
                 const itemElement = Tool.html(`<section class="item">
     <header>${file.name}</header>
@@ -284,16 +306,14 @@
             };
 
             fileElement.addEventListener('click', () => {
-                // 支付宝自带UC不能执行上传文件块的fetch!
-                if (window.AlipayJSBridge) {
-                    alert('支付宝自带浏览器存在问题无法正常发送文件, 请复制链接后用专门的浏览器打开! 推荐使用Chrome, 以获得最佳体验.');
-                    return;
-                }
-
                 const inputElement = Tool.html(`<input type="file" multiple style="display: none;">`);
                 document.body.append(inputElement);
 
                 inputElement.addEventListener('change', () => {
+                    if (isWeChat()) {
+                        alert('微信扫码存在问题，同时选择多个文件则不能发送！请同时只选择一个文件。');
+                    }
+
                     for (const file of inputElement.files) {
                         console.debug('选择文件', file);
                         sendFile(file);
@@ -380,6 +400,7 @@
             <button id="sendText">发送文本</button>
             <button id="file">选择并发送文件</button>
         </div>
+        <div id="notice"><!-- 注意 --></div>
 
         <div class="dropTips">松开发送拖动的文件</div>
     </header>
